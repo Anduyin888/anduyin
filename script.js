@@ -7,14 +7,16 @@ function recognize() {
     return;
   }
 
+  document.getElementById('output').innerText = "正在识别，请稍候...";
+
   Tesseract.recognize(file, 'eng', {
     logger: m => console.log(m)
   }).then(({ data: { text } }) => {
-    document.getElementById('output').innerText = text;
     textResult = text;
+    document.getElementById('output').innerText = textResult;
   }).catch(err => {
     console.error("识别失败：", err);
-    alert("识别失败，请重试");
+    alert("文字识别失败，请重试");
   });
 }
 
@@ -24,29 +26,35 @@ function speak() {
     return;
   }
 
-  if (!window.speechSynthesis) {
+  const synth = window.speechSynthesis;
+
+  if (!synth) {
     alert("当前浏览器不支持语音朗读！");
     return;
   }
 
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length === 0) {
-    // 一些浏览器需要先调用一次 speak 才加载 voices
-    window.speechSynthesis.onvoiceschanged = () => speak();
-    window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-    return;
-  }
+  // 格式化文本，增强停顿效果
+  const cleanText = textResult
+    .replace(/\n/g, '. ') // 换行变停顿
+    .replace(/([^\.\?\!])\s+/g, '$1. ') // 没有标点的地方加句号
+    .replace(/\.\.+/g, '.'); // 清理多余句号
 
-  const utterance = new SpeechSynthesisUtterance(textResult);
-  utterance.lang = 'en-US'; // 语言设为英文
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+
+  // 设置语音参数
+  utterance.lang = 'en-US';
   utterance.pitch = 1;
-  utterance.rate = 1;
+  utterance.rate = 0.85; // 降低语速更自然
+  utterance.volume = 1.0;
 
-  // 选取英文语音
-  const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
-  if (englishVoice) {
-    utterance.voice = englishVoice;
+  const voices = synth.getVoices();
+  const preferredVoice = voices.find(v => v.name.includes("Google") && v.lang === 'en-US')
+                      || voices.find(v => v.lang === 'en-US');
+
+  if (preferredVoice) {
+    utterance.voice = preferredVoice;
   }
 
-  window.speechSynthesis.speak(utterance);
+  synth.cancel(); // 先取消正在播放的语音
+  synth.speak(utterance);
 }
