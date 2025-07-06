@@ -1,32 +1,18 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <title>图像/PDF文字识别 + 中文朗读</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>图片+PDF识别朗读器</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>图像 / PDF 文字识别 + 中文朗读</h1>
-
-  <!-- 图片识别区域 -->
-  <div>
-    <input type="file" id="imageInput" accept="image/*">
-    <button onclick="recognize()">识别图片文字</button>
-  </div>
-
-  <!-- PDF识别区域 -->
-  <div style="margin-top: 1em;">
-    <input type="file" id="pdfInput" accept="application/pdf">
-    <button onclick="extractPdfText()">识别PDF文字</button>
-  </div>
-
-  <!-- 输出与朗读 -->
-  <pre id="output"></pre>
-  <button onclick="speak()">朗读文字</button>
-
-  <!-- 引入 OCR、PDF.js、主逻辑 -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <h1>图文识别 + 朗读工具</h1>
+  <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf">
+  <button onclick="handleFile()">识别文件</button>
+  <pre id="result"></pre>
+  <button onclick="readText()">朗读文字</button>
+  <script src="https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
+  <script src="https://unpkg.com/pdfjs-dist@2.14.305/build/pdf.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

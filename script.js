@@ -1,95 +1,55 @@
-let textResult = '';
+const fileInput = document.getElementById('fileInput');
+const resultBox = document.getElementById('result');
 
-// 图片识别（中文）
-function recognize() {
-  const file = document.getElementById('imageInput').files[0];
-  if (!file) {
-    alert("请先选择一张图片！");
-    return;
-  }
+function handleFile() {
+  const file = fileInput.files[0];
+  if (!file) return;
 
-  document.getElementById('output').innerText = "正在识别，请稍候...";
-
-  Tesseract.recognize(
-    file,
-    'chi_sim',
-    {
-      langPath: 'https://tessdata.projectnaptha.com/4.0.0/',
+  const reader = new FileReader();
+  if (file.type === 'application/pdf') {
+    reader.onload = function () {
+      extractTextFromPDF(reader.result);
+    };
+    reader.readAsArrayBuffer(file);
+  } else if (file.type.startsWith('image/')) {
+    Tesseract.recognize(file, 'chi_sim+eng', {
       logger: m => console.log(m)
-    }
-  ).then(({ data: { text } }) => {
-    textResult = text;
-    document.getElementById('output').innerText = text;
-  }).catch(err => {
-    console.error("识别失败：", err);
-    alert("图片识别失败，请重试");
-  });
-}
-
-// PDF识别（文字提取）
-function extractPdfText() {
-  const file = document.getElementById('pdfInput').files[0];
-  if (!file) {
-    alert("请上传 PDF 文件");
-    return;
-  }
-
-  const fileReader = new FileReader();
-  fileReader.onload = function () {
-    const typedArray = new Uint8Array(this.result);
-
-    pdfjsLib.getDocument(typedArray).promise.then(async function (pdf) {
-      let textContent = '';
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const strings = content.items.map(item => item.str);
-        textContent += strings.join(' ') + '\n\n';
-      }
-      textResult = textContent;
-      document.getElementById('output').innerText = textContent;
-    }).catch(function (err) {
-      console.error('PDF解析失败：', err);
-      alert("PDF 识别失败");
+    }).then(({ data: { text } }) => {
+      resultBox.textContent = text.trim();
     });
-  };
-
-  fileReader.readAsArrayBuffer(file);
+  }
 }
 
-// 中文朗读（自然语速 + 停顿优化）
-function speak() {
-  if (!textResult) {
-    alert("请先识别出文字");
-    return;
+async function extractTextFromPDF(arrayBuffer) {
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(item => item.str).join(' ');
+    fullText += pageText + '\n';
   }
 
-  const synth = window.speechSynthesis;
-  if (!synth) {
-    alert("当前浏览器不支持语音朗读！");
-    return;
-  }
+  resultBox.textContent = fullText.trim();
+}
 
-  let cleanText = textResult
-    .replace(/[ ]+/g, '')
-    .replace(/\n{2,}/g, '。')
-    .replace(/\n/g, '，')
-    .replace(/([^\。\？\！。？！，,])$/g, '$1。')
-    .replace(/([^\。\？\！])\s/g, '$1，');
+function detectLang(text) {
+  const isChinese = /[一-鿿]/.test(text);
+  return isChinese ? 'zh-CN' : 'en-US';
+}
 
-  const utterance = new SpeechSynthesisUtterance(cleanText);
+function readText() {
+  const text = resultBox.textContent;
+  if (!text) return;
 
-  utterance.lang = 'zh-CN';
+  const lang = detectLang(text);
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = lang === 'zh-CN' ? 1 : 0.95;
   utterance.pitch = 1;
-  utterance.rate = 0.85;
-  utterance.volume = 1.0;
+  utterance.volume = 1;
 
-  const voices = synth.getVoices();
-  const chineseVoice = voices.find(v => v.lang === 'zh-CN');
-  if (chineseVoice) {
-    utterance.voice = chineseVoice;
-  }
-
-  synth.cancel();
-  synth.speak(utterance);
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
 }
