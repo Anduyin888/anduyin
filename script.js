@@ -1,55 +1,89 @@
-const fileInput = document.getElementById('fileInput');
-const resultBox = document.getElementById('result');
 
-function handleFile() {
-  const file = fileInput.files[0];
-  if (!file) return;
+let textOutput = document.getElementById('textOutput');
+let currentUtterance = null;
+let synth = window.speechSynthesis;
 
-  const reader = new FileReader();
-  if (file.type === 'application/pdf') {
-    reader.onload = function () {
-      extractTextFromPDF(reader.result);
-    };
-    reader.readAsArrayBuffer(file);
-  } else if (file.type.startsWith('image/')) {
-    Tesseract.recognize(file, 'chi_sim+eng', {
-      logger: m => console.log(m)
-    }).then(({ data: { text } }) => {
-      resultBox.textContent = text.trim();
-    });
-  }
-}
+// 设置语速
+let speechRate = 0.9;
 
-async function extractTextFromPDF(arrayBuffer) {
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let fullText = '';
-
-  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-    const page = await pdf.getPage(pageNum);
-    const content = await page.getTextContent();
-    const pageText = content.items.map(item => item.str).join(' ');
-    fullText += pageText + '\n';
-  }
-
-  resultBox.textContent = fullText.trim();
-}
-
+// 自动识别语言（简单中英判断）
 function detectLang(text) {
-  const isChinese = /[一-鿿]/.test(text);
-  return isChinese ? 'zh-CN' : 'en-US';
+    const chineseChar = /[一-龥]/;
+    return chineseChar.test(text) ? 'zh-CN' : 'en-US';
 }
 
-function readText() {
-  const text = resultBox.textContent;
-  if (!text) return;
+document.getElementById('readTextBtn').addEventListener('click', () => {
+    const text = textOutput.value.trim();
+    if (!text) return;
 
-  const lang = detectLang(text);
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = lang === 'zh-CN' ? 1 : 0.95;
-  utterance.pitch = 1;
-  utterance.volume = 1;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = detectLang(text);
+    utterance.rate = speechRate;
+    currentUtterance = utterance;
+    synth.speak(utterance);
+});
 
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utterance);
-}
+document.getElementById('pauseBtn').addEventListener('click', () => {
+    if (synth.speaking && !synth.paused) {
+        synth.pause();
+    }
+});
+
+document.getElementById('resumeBtn').addEventListener('click', () => {
+    if (synth.paused) {
+        synth.resume();
+    }
+});
+
+document.getElementById('stopBtn').addEventListener('click', () => {
+    synth.cancel();
+});
+
+document.getElementById('rateSlider').addEventListener('input', (e) => {
+    speechRate = parseFloat(e.target.value);
+    document.getElementById('rateDisplay').innerText = '语速: ' + speechRate.toFixed(1);
+});
+
+// OCR 图像识别
+document.getElementById('imageBtn').addEventListener('click', () => {
+    const file = document.getElementById('fileInput').files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function () {
+        Tesseract.recognize(reader.result, 'chi_sim+eng', {
+            logger: m => console.log(m)
+        }).then(({ data: { text } }) => {
+            textOutput.value = text;
+        });
+    };
+    reader.readAsDataURL(file);
+});
+
+// 识别 PDF
+document.getElementById('pdfBtn').addEventListener('click', () => {
+    const file = document.getElementById('fileInput').files[0];
+    if (!file || !file.type.includes('pdf')) return;
+
+    const fileReader = new FileReader();
+    fileReader.onload = function () {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
+            pdf.getPage(1).then(function (page) {
+                const viewport = page.getViewport({ scale: 2.0 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
+                    Tesseract.recognize(canvas, 'chi_sim+eng', {
+                        logger: m => console.log(m)
+                    }).then(({ data: { text } }) => {
+                        textOutput.value = text;
+                    });
+                });
+            });
+        });
+    };
+    fileReader.readAsArrayBuffer(file);
+});
