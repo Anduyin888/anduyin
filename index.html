@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Langsee 朗识</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@tabler/icons@latest/icons-react.umd.min.js"></script>
 </head>
 <body>
   <header>
@@ -15,13 +16,21 @@
     <div class="box-wrapper">
       <div id="text-box" contenteditable="true" placeholder="等待识别结果..."></div>
       <div class="upload-icons">
-        <label title="上传PDF📎">
+        <label title="上传PDF">
           <input type="file" id="pdf-upload" accept=".pdf" hidden>
-          <span class="icon">📎</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paperclip" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#999" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M16.5 6.5l-8.5 8.5a4 4 0 1 0 5.5 5.5l8.5 -8.5a6 6 0 1 0 -8.5 -8.5l-10 10" />
+          </svg>
         </label>
-        <label title="上传图片🖼️">
+        <label title="上传图片">
           <input type="file" id="img-upload" accept="image/*" hidden>
-          <span class="icon">🖼️</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-photo" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#999" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M15 8h.01" />
+            <path d="M6 21h12a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-12a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2z" />
+            <path d="M4 17l4 -4a3 5 0 0 1 4 0l4 4" />
+          </svg>
         </label>
       </div>
     </div>
