@@ -22,18 +22,24 @@ function stopSpeaking() {
   synth.cancel();
 }
 
-function startOCR() {
-  const fileInput = document.getElementById("img-upload");
-  const file = fileInput.files[0];
-  if (!file) return alert("请先上传图片");
-
+function handleOCR(file) {
+  if (!file) return;
   const reader = new FileReader();
   reader.onload = function () {
+    document.getElementById("loading-indicator").style.display = "block";
     Tesseract.recognize(reader.result, 'chi_sim', {
       logger: m => console.log(m)
     }).then(({ data: { text } }) => {
       document.getElementById("text-box").innerText = text.trim();
+      document.getElementById("loading-indicator").style.display = "none";
     });
   };
   reader.readAsDataURL(file);
 }
+
+document.getElementById("img-upload").addEventListener("change", function () {
+  handleOCR(this.files[0]);
+});
+document.getElementById("pdf-upload").addEventListener("change", function () {
+  handleOCR(this.files[0]);
+});

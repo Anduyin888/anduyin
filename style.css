@@ -8,7 +8,6 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  overflow-y: auto;
 }
 
 header {
@@ -53,35 +52,33 @@ main {
   text-align: left;
   border-radius: 8px;
   background: #fafafa;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
 }
 
-#text-box::-webkit-scrollbar {
-  width: 6px;
+.upload-area {
+  margin-top: 12px;
+  text-align: right;
 }
 
-#text-box::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 10px;
-}
-
-.upload-icons {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  display: flex;
-  gap: 12px;
-}
-
-.upload-icons svg {
+.upload-area label {
   cursor: pointer;
+  margin-left: 10px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
   stroke: #999;
   transition: stroke 0.3s;
 }
 
-.upload-icons svg:hover {
+.icon:hover {
   stroke: #007aff;
+}
+
+.loading {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #999;
 }
 
 .button-group {
@@ -90,6 +87,7 @@ main {
   gap: 10px;
   flex-wrap: wrap;
 }
+
 .button-group button {
   border: 1px solid #007aff;
   color: #007aff;
@@ -99,6 +97,7 @@ main {
   cursor: pointer;
   transition: 0.2s ease;
 }
+
 .button-group button:hover {
   background: #007aff;
   color: #fff;
