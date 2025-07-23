@@ -12,17 +12,18 @@
   </header>
 
   <main>
-    <div id="text-box" contenteditable="true" placeholder="等待识别结果..."></div>
-
-    <div class="upload-area">
-      <label>
-        📎
-        <input type="file" id="pdf-upload" accept=".pdf" hidden>
-      </label>
-      <label>
-        🖼️
-        <input type="file" id="img-upload" accept="image/*" hidden>
-      </label>
+    <div class="box-wrapper">
+      <div id="text-box" contenteditable="true" placeholder="等待识别结果..."></div>
+      <div class="upload-icons">
+        <label title="上传PDF📎">
+          <input type="file" id="pdf-upload" accept=".pdf" hidden>
+          <span class="icon">📎</span>
+        </label>
+        <label title="上传图片🖼️">
+          <input type="file" id="img-upload" accept="image/*" hidden>
+          <span class="icon">🖼️</span>
+        </label>
+      </div>
     </div>
 
     <div class="button-group">

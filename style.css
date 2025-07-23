@@ -24,8 +24,13 @@ p {
 main {
   max-width: 600px;
   margin: 40px auto;
-  padding: 20px;
+  padding: 0 20px;
+}
+
+.box-wrapper {
+  position: relative;
   background: #fff;
+  padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
@@ -34,28 +39,35 @@ main {
   min-height: 180px;
   border: 1px solid #eee;
   padding: 15px;
-  margin-bottom: 20px;
   text-align: left;
   border-radius: 8px;
   background: #fafafa;
   overflow-y: auto;
 }
 
-.upload-area {
-  margin-bottom: 20px;
+.upload-icons {
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
 }
 
-.upload-area label {
+.upload-icons label {
   cursor: pointer;
-  font-size: 22px;
-  margin: 0 10px;
+  font-size: 20px;
+  margin-left: 12px;
+  color: #999;
+}
+
+.upload-icons label:hover {
+  color: #007aff;
 }
 
 .button-group {
+  margin-top: 20px;
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .button-group button {
