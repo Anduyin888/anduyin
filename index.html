@@ -13,31 +13,34 @@
 
   <main>
     <div class="box-wrapper">
-      <div id="text-box" contenteditable="true" placeholder="等待识别结果..."></div>
-      <div class="upload-area">
-        <label>
-          <input type="file" id="pdf-upload" accept=".pdf" hidden>
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke="currentColor" fill="none">
-            <path d="M16.5 6.5l-8.5 8.5a4 4 0 1 0 5.5 5.5l8.5 -8.5a6 6 0 1 0 -8.5 -8.5l-10 10" />
-          </svg>
-        </label>
-        <label>
-          <input type="file" id="img-upload" accept="image/*" hidden>
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke="currentColor" fill="none">
-            <path d="M15 8h.01" />
-            <path d="M6 21h12a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-12a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2z" />
-            <path d="M4 17l4 -4a3 5 0 0 1 4 0l4 4" />
-          </svg>
-        </label>
-        <div id="loading-indicator" class="loading" style="display:none;">识别中...</div>
+      <div id="text-box" contenteditable="true"></div>
+      <div id="center-loading" class="center-loading" style="display:none;">
+        <div class="spinner"></div>
       </div>
-    </div>
-
-    <div class="button-group">
-      <button onclick="speakText()">AI 朗读</button>
-      <button onclick="pauseSpeaking()">暂停</button>
-      <button onclick="resumeSpeaking()">继续</button>
-      <button onclick="stopSpeaking()">停止</button>
+      <div class="bottom-bar">
+        <div class="button-group">
+          <button onclick="speakText()">AI 朗读</button>
+          <button onclick="pauseSpeaking()">暂停</button>
+          <button onclick="resumeSpeaking()">继续</button>
+          <button onclick="stopSpeaking()">停止</button>
+        </div>
+        <div class="upload-area">
+          <label>
+            <input type="file" id="pdf-upload" accept=".pdf" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <path d="M16.5 6.5l-8.5 8.5a4 4 0 1 0 5.5 5.5l8.5 -8.5a6 6 0 1 0 -8.5 -8.5l-10 10" />
+            </svg>
+          </label>
+          <label>
+            <input type="file" id="img-upload" accept="image/*" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <path d="M15 8h.01" />
+              <path d="M6 21h12a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-12a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2z" />
+              <path d="M4 17l4 -4a3 5 0 0 1 4 0l4 4" />
+            </svg>
+          </label>
+        </div>
+      </div>
     </div>
   </main>
 
